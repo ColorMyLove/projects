@@ -82,16 +82,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 设置初始密码
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         // 设置创建时间和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
 
         // 设置当前记录创建人id 和 修改人 id
         // 在创建 jwt 令牌并将其传到客户端后,客户端会将令牌保存下来, 后面每次发送请求都携带
         // jwt 令牌中保存了 id, 那么同样可以解析出来
 
         // 修改为当前用户的 Id
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        employee.setCreateUser(BaseContext.getCurrentId());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
 
         employeeMapper.insert(employee);
         return Result.success();
@@ -138,11 +138,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 拷贝属性
         BeanUtils.copyProperties(employeeDTO, employee);
 
-        // 修改 修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-
-        // 修改更新者
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        // 修改 修改时间
+//        employee.setUpdateTime(LocalDateTime.now());
+//
+//        // 修改更新者
+//        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
     }
 }
