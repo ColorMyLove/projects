@@ -115,4 +115,34 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> result = pageQuery.getResult();
         return new PageResult(pages, result);
     }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        // update employee set status = ? where id = ?
+        // 创建实体对象并设置属性值
+        Employee employee = Employee.builder().status(status).id(id).build();
+        employeeMapper.update(employee);
+    }
+
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        // 创建对象
+        Employee employee = new Employee();
+        // 拷贝属性
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        // 修改 修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+
+        // 修改更新者
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+    }
 }
