@@ -115,4 +115,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> result = pageQuery.getResult();
         return new PageResult(pages, result);
     }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        // update employee set status = ? where id = ?
+        // 创建实体对象并设置属性值
+        Employee employee = Employee.builder().status(status).id(id).build();
+        employeeMapper.update(employee);
+    }
 }
