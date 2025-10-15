@@ -10,16 +10,16 @@
                 name = #{name},
             </if>
             <if test="username != null">
-                username = #{username},
+                name = #{username},
             </if>
             <if test="password != null">
-                password = #{password},
+                name = #{password},
             </if>
             <if test="phone != null">
-                phone = #{phone},
+                name = #{phone},
             </if>
             <if test="sex != null">
-                sex = #{sex},
+                name = #{sex},
             </if>
             <if test="idNumber != null">
                 id_Number = #{idNumber},
