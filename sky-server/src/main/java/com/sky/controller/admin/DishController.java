@@ -9,12 +9,15 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.user.DefaultUserDestinationResolver;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /*
  * @Author lhj
@@ -31,11 +34,18 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    // 注入 RedisTemplate, 用于操作Redis数据库
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @PostMapping
     @ApiOperation(value = "新增菜品")
     public Result save(@RequestBody DishDTO dto) {
         log.info("新增菜品: {}", dto);
         dishService.saveWithFlavor(dto);
+        // 清理缓存数据
+        String key = "dish_" + dto.getCategoryId();
+        redisTemplate.delete(key);
         return Result.success();
     }
 
@@ -51,6 +61,10 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("菜品批量删除:{ }", ids);
         dishService.deleteBatch(ids);
+        // 先查找所有以 dish 开头的 key
+        Set keys = redisTemplate.keys("dish_*");
+        // 删除所有相关的 redis 缓存
+        redisTemplate.delete(keys);
         return Result.success();
     }
 
@@ -67,6 +81,31 @@ public class DishController {
     public Result update(@RequestBody DishDTO dto) {
         log.info("修改菜品: {}", dto);
         dishService.updateWithFlavor(dto);
+        // 先查找所有以 dish 开头的 key
+        Set keys = redisTemplate.keys("dish_*");
+        // 删除所有相关的 redis 缓存
+        redisTemplate.delete(keys);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("根据分类Id 查询分类")
+    public Result<List<Dish>> selectByCategoryId(@RequestParam("categoryId") Long categoryId) {
+        log.info("分类Id: {}", categoryId);
+        List<Dish> dishes = dishService.selectByCategoryId(categoryId);
+        return Result.success(dishes);
+    }
+
+    @PutMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id) {
+        dishService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    public void cleanCache(String pattern) {
+        // 查找所有匹配的 key
+        Set keys = redisTemplate.keys(pattern);
+        // 删除匹配的 key
+        redisTemplate.delete(keys);
     }
 }
