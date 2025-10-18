@@ -11,7 +11,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.List;
 @RequestMapping("/admin/setmeal")
 @Api("套餐相关接口")
 public class SetmeanController {
-
     @Autowired
     private SetmealService setmealService;
 
