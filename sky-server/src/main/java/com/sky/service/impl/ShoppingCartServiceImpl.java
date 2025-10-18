@@ -52,7 +52,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             // 执行更新操作
             shoppingCartMapper.updateNumberById(cart);
         } else {
-            Long dishId = shoppingCart.getDishId();
+            Long dishId = shoppingCartDTO.getDishId();
             if (dishId != null) {
                 // 根据 Id 从数据表中查询数据
                 Dish dish = dishMapper.getById(dishId);
@@ -60,16 +60,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCart.setAmount(dish.getPrice());
                 shoppingCart.setImage(dish.getImage());
             } else {
-                Long setmealId = shoppingCart.getSetmealId();
+                Long setmealId = shoppingCartDTO.getSetmealId();
                 Setmeal setmeal = setmealMapper.getById(setmealId);
                 shoppingCart.setName(setmeal.getName());
                 shoppingCart.setAmount(setmeal.getPrice());
                 shoppingCart.setImage(setmeal.getImage());
             }
+            shoppingCart.setUserId(BaseContext.getCurrentId());
+            shoppingCart.setNumber(1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            shoppingCartMapper.insert(shoppingCart);
         }
-        shoppingCart.setUserId(BaseContext.getCurrentId());
-        shoppingCart.setNumber(1);
-        shoppingCart.setCreateTime(LocalDateTime.now());
-        shoppingCartMapper.insert(shoppingCart);
+    }
+
+    /**
+     * 查看购物车
+     *
+     * @return
+     */
+    @Override
+    public List<ShoppingCart> showShoppingCart() {
+        Long currentId = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart = ShoppingCart.builder().userId(currentId).build();
+        // 从数据库中查询数据
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        return list;
     }
 }
