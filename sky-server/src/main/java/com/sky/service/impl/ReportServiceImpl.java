@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
@@ -28,7 +29,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ReportServiceImpl implements ReportService {
-
     @Autowired
     private OrderMapper orderMapper;
 
@@ -93,10 +93,44 @@ public class ReportServiceImpl implements ReportService {
         String newUser = StringUtils.join(newUserList, ",");
         String total = StringUtils.join(totalUserList, ",");
         // 返回从数据库中获取的数据
-        return UserReportVO.builder()
-                .dateList(joined)
-                .totalUserList(total)
-                .newUserList(newUser)
+        return UserReportVO.builder().dateList(joined).totalUserList(total).newUserList(newUser).build();
+    }
+
+    @Override
+    public OrderReportVO getOrderStatistics(LocalDate begin, LocalDate end) {
+        // 创建时间列表
+        List<LocalDate> dateList = new ArrayList<>();
+        while (!begin.equals(end)) {
+            dateList.add(begin);
+            begin = begin.plusDays(1);
+        }
+
+        List<Integer> orderCountList = new ArrayList<>();
+        List<Integer> validOrderCountList = new ArrayList<>();
+
+        for (LocalDate dl : dateList) {
+            LocalDateTime beginTime = LocalDateTime.of(dl, LocalTime.MIN);
+            LocalDateTime endTime = LocalDateTime.of(dl, LocalTime.MAX);
+            Integer total = orderMapper.sumByCreateDay(beginTime, endTime);
+            Integer valid = orderMapper.sumByCreateDayWithStatus(beginTime, endTime, Orders.COMPLETED);
+            orderCountList.add(total);
+            validOrderCountList.add(valid);
+        }
+        String dataListString = StringUtils.join(dateList, ",");
+        String orderCountListString = StringUtils.join(orderCountList, ",");
+        String validOrderCountListString = StringUtils.join(validOrderCountList, ",");
+
+        Integer orderSum = orderCountList.stream().reduce(Integer::sum).get();
+        Integer validOrderSum = validOrderCountList.stream().reduce(Integer::sum).get();
+        Double orderCompletionRate = 0.0;
+        if (orderSum != 0) orderCompletionRate = validOrderSum.doubleValue() / orderSum.doubleValue();
+        return OrderReportVO.builder()
+                .dateList(dataListString)
+                .orderCountList(orderCountListString)
+                .validOrderCountList(validOrderCountListString)
+                .totalOrderCount(orderSum)
+                .validOrderCount(validOrderSum)
+                .orderCompletionRate(orderCompletionRate)
                 .build();
     }
 }

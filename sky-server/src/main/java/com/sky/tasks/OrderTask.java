@@ -50,7 +50,7 @@ public class OrderTask {
     /**
      * 处理处于待派送状态的订单
      */
-    @Scheduled(cron = "0 0 1 * * ?")    // 每天凌晨一点触发
+//    @Scheduled(cron = "0 0 1 * * ?")    // 每天凌晨一点触发
     public void processDeliveryOrder() {
         log.info("处理一直处于派送状态的订单");
         LocalDateTime time = LocalDateTime.now().plusMinutes(-60);

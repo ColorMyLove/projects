@@ -51,4 +51,19 @@
         from user
         where create_time between #{beginTime} and #{endTime}
     </select>
+    <select id="sumByCreateDayWithStatus" resultType="java.lang.Integer">
+        select count(1)
+        from orders
+        <where>
+            <if test="beginTime != null">
+                and order_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and order_time &lt; #{endTime}
+            </if>
+            <if test="completed != null">
+                and pay_status = #{completed}
+            </if>
+        </where>
+    </select>
 </mapper>

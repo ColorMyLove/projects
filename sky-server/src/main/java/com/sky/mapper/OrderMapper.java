@@ -59,4 +59,6 @@ public interface OrderMapper {
      * @return
      */
     Integer sumByCreateDay(LocalDateTime beginTime, LocalDateTime endTime);
+
+    Integer sumByCreateDayWithStatus(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
 }
