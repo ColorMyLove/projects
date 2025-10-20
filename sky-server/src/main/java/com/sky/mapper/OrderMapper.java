@@ -1,11 +1,13 @@
 package com.sky.mapper;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
+import com.sky.vo.SalesTop10ReportVO;
+import com.sky.vo.TopXVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -61,4 +63,6 @@ public interface OrderMapper {
     Integer sumByCreateDay(LocalDateTime beginTime, LocalDateTime endTime);
 
     Integer sumByCreateDayWithStatus(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
+
+    List<GoodsSalesDTO> getTopN(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
 }

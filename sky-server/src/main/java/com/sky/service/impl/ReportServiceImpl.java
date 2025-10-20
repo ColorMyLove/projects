@@ -1,11 +1,10 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.vo.*;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
  * @Author lhj
@@ -124,13 +124,19 @@ public class ReportServiceImpl implements ReportService {
         Integer validOrderSum = validOrderCountList.stream().reduce(Integer::sum).get();
         Double orderCompletionRate = 0.0;
         if (orderSum != 0) orderCompletionRate = validOrderSum.doubleValue() / orderSum.doubleValue();
-        return OrderReportVO.builder()
-                .dateList(dataListString)
-                .orderCountList(orderCountListString)
-                .validOrderCountList(validOrderCountListString)
-                .totalOrderCount(orderSum)
-                .validOrderCount(validOrderSum)
-                .orderCompletionRate(orderCompletionRate)
-                .build();
+        return OrderReportVO.builder().dateList(dataListString).orderCountList(orderCountListString).validOrderCountList(validOrderCountListString).totalOrderCount(orderSum).validOrderCount(validOrderSum).orderCompletionRate(orderCompletionRate).build();
+    }
+
+    @Override
+    public SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end) {
+        // 计算最早和最晚的时间
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        List<GoodsSalesDTO> topXVOList = orderMapper.getTopN(beginTime, endTime, Orders.COMPLETED);
+        List<String> names = topXVOList.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numbers = topXVOList.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+        String joined_name = StringUtils.join(names, ",");
+        String joined_number = StringUtils.join(numbers, ",");
+        return SalesTop10ReportVO.builder().nameList(joined_name).numberList(joined_number).build();
     }
 }
