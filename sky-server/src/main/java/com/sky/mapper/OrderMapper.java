@@ -65,4 +65,11 @@ public interface OrderMapper {
     Integer sumByCreateDayWithStatus(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
 
     List<GoodsSalesDTO> getTopN(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
+
+    /**
+     * 根据条件统计菜品数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }
