@@ -46,4 +46,9 @@
             </if>
         </where>
     </select>
+    <select id="sumByCreateDay" resultType="java.lang.Integer">
+        select count(1)
+        from user
+        where create_time between #{beginTime} and #{endTime}
+    </select>
 </mapper>

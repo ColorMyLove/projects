@@ -4,6 +4,8 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.TurnoverReportVO;
+import com.sky.vo.UserReportVO;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +66,37 @@ public class ReportServiceImpl implements ReportService {
         turnoverReportVO.setDateList(joined);
         turnoverReportVO.setTurnoverList(StringUtils.join(turnoverList, ","));
         return turnoverReportVO;
+    }
+
+    @Override
+    public UserReportVO getUserStatistics(LocalDate begin, LocalDate end) {
+        // 创建返回日期列表
+        List<LocalDate> dateList = new ArrayList<>();
+        while (!begin.equals(end)) {
+            dateList.add(begin);
+            begin = begin.plusDays(1);
+        }
+
+        List<Integer> newUserList = new ArrayList<>();
+        List<Integer> totalUserList = new ArrayList<>();
+        Integer sum = 0;
+        for (LocalDate dl : dateList) {
+            LocalDateTime beginTime = LocalDateTime.of(dl, LocalTime.MIN);
+            LocalDateTime endTime = LocalDateTime.of(dl, LocalTime.MAX);
+            Integer t = orderMapper.sumByCreateDay(beginTime, endTime);
+            sum += t;
+            newUserList.add(t);
+            totalUserList.add(sum);
+        }
+
+        String joined = StringUtils.join(dateList, ",");
+        String newUser = StringUtils.join(newUserList, ",");
+        String total = StringUtils.join(totalUserList, ",");
+        // 返回从数据库中获取的数据
+        return UserReportVO.builder()
+                .dateList(joined)
+                .totalUserList(total)
+                .newUserList(newUser)
+                .build();
     }
 }
