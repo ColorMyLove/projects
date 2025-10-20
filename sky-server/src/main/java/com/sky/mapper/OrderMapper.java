@@ -3,6 +3,10 @@ package com.sky.mapper;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /*
  * @Author lhj
@@ -28,4 +32,10 @@ public interface OrderMapper {
      * @param orders
      */
     void update(Orders orders);
+
+    @Update("update orders set status = #{orderStatus},pay_status=#{ordersPaidStatus},checkout_time = #{checkOutTime} where id=#{orderId}")
+    void updateStatus(Integer orderStatus, Integer ordersPaidStatus, LocalDateTime checkOutTime, Long orderId);
+
+    @Select("select * from orders where status = #{pendingPayment} and order_time < #{time}")
+    List<Orders> getByStatusAndOrderTimeLT(Integer pendingPayment, LocalDateTime time);
 }
