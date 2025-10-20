@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = {"店铺相关接口"})
 @Slf4j
 public class ShopController {
-
     @Autowired
     private RedisTemplate redisTemplate;
 

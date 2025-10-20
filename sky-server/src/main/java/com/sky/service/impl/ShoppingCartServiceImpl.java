@@ -96,6 +96,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // 查看数据
         List<ShoppingCart> shoppingCarts = shoppingCartMapper.select(shoppingCart);
         ShoppingCart cart = shoppingCarts.get(0);
+        if (cart == null) return;
         if (cart.getNumber() == 1) {
             shoppingCartMapper.delete(cart);
         } else if (cart.getNumber() > 1) {
