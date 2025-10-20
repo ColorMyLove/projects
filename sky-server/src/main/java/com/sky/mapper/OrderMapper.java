@@ -38,4 +38,7 @@ public interface OrderMapper {
 
     @Select("select * from orders where status = #{pendingPayment} and order_time < #{time}")
     List<Orders> getByStatusAndOrderTimeLT(Integer pendingPayment, LocalDateTime time);
+
+    @Select("select * from orders where id = #{id}")
+    Orders getById();
 }
