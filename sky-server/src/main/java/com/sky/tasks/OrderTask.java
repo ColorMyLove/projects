@@ -19,15 +19,13 @@ import java.util.List;
 @Component
 @Slf4j
 public class OrderTask {
-
     @Autowired
     private OrderMapper orderMapper;
 
     /**
      * 处理支付超时订单
      */
-//    @Scheduled(cron = "0 0/1 * * * ?") // 每分钟触发一次
-    @Scheduled(cron = "0/5 * * * * ?") // 每分钟触发一次
+    @Scheduled(cron = "0 0/1 * * * ?") // 每分钟触发一次
     public void processTimeoutOrder() {
         log.info("定时处理支付超时订单：{}", LocalDateTime.now());
         /*
@@ -52,9 +50,7 @@ public class OrderTask {
     /**
      * 处理处于待派送状态的订单
      */
-//    @Scheduled(cron = "0 0 1 * * ?")    // 每天凌晨一点触发
-    @Scheduled(cron = "1/5 * * * * ?") // 每分钟触发一次
-
+    @Scheduled(cron = "0 0 1 * * ?")    // 每天凌晨一点触发
     public void processDeliveryOrder() {
         log.info("处理一直处于派送状态的订单");
         LocalDateTime time = LocalDateTime.now().plusMinutes(-60);

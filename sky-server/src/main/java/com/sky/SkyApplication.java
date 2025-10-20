@@ -6,11 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @SpringBootApplication
 @EnableTransactionManagement //开启注解方式的事务管理
 @EnableCaching  //启用Spring的缓存注解功能，允许在项目中使用@Cacheable、@CacheEvict等缓存相关注解
 @EnableScheduling
+@EnableWebSocket
 @Slf4j
 public class SkyApplication {
     public static void main(String[] args) {
