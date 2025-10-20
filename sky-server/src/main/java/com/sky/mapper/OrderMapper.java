@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /*
  * @Author lhj
@@ -41,4 +42,12 @@ public interface OrderMapper {
 
     @Select("select * from orders where id = #{id}")
     Orders getById();
+
+    /**
+     * 根据条件查询某一时间段订单总金额
+     *
+     * @param map
+     * @return
+     */
+    Double sumByMap(Map map);
 }
